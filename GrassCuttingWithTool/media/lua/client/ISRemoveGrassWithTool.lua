@@ -5,10 +5,12 @@ require "TimedActions/ISRemoveGrass"
 -- Added the ISRemoveGrass:adjustMaxTime to perform the base operation then adjust it if we have an appropriate tool.
 -- A scyte will reduce the maxTime by 50%
 -- TODO:
---      Make configurable in the item definition
---      A short blade will reduce the maxTime by %
---      Give a little short blade xp for every use
---      Make the scythe reduce time a function of the base amount and the short blade skill
+--      [ ] Make configurable in the item definition
+--      [+] A short blade will reduce the maxTime by %
+--      [+] Give a little short blade xp for every use
+--      [+] Make the scythe reduce time a function of the base amount and the short blade skill
+--      [-] Fix languange bug: Use the type instead of the name.
+--      [ ] Modify the messages to use the language name for HandScythe
 local baseHandScytheFactor = 0.5
 local oneHandEmptyMessageCount = 3
 local wishForScytheMessageCount = 2
@@ -24,7 +26,7 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
     -- Nothing in the secondary hand - can't use a scythe one-handed to cut grass.
     if primaryItem then
         local primaryItemCategories = primaryItem:getCategories()
-        if primaryItem:getName() == "Hand Scythe" then
+        if primaryItem:getType() == "HandScythe" then
             if secondaryItem then 
                 if oneHandEmptyMessageCount > 0 then
                     HaloTextHelper.addText(player, "I can't use a hand scythe to cut grass unless the other hand is empty")
@@ -46,7 +48,7 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
             end
         else 
             if notAHandScytheMessageCount > 0 then
-                HaloTextHelper.addText(player, "This is not a hand scythe. It's a " .. primaryItem:getName())
+                HaloTextHelper.addText(player, "This is not a hand scythe. It's a " .. primaryItem:getName() .. " [" .. primaryItem:getType() .. "]")
                 notAHandScytheMessageCount = notAHandScytheMessageCount - 1 
             end
         end
