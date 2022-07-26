@@ -1,0 +1,5 @@
+name=Rick's MLC Grass Cutting Mod
+poster=poster.png
+id=RicksMLC_GrassCuttingMod
+description=I love cutting grass, but don't have the time.  This mod reduces the Remove Grass action time by a base 50% + short blade skill if you have a Hand Scythe in the primary hand, and the secondary hand is empty.
+url=https://github.com/RicksMLC/RicksMLC_PZGrassCutting

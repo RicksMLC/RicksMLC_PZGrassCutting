@@ -1,0 +1,12 @@
+module RicksMLC_GrassCuttingMod {
+    /**
+        Modify the grass cutting action to use the hand scythe to make grass cutting quicker
+        C:\Program Files (x86)\Steam\steamapps\common\ProjectZomboid\media\scripts\items_weapons.txt
+            item HandScythe
+     **/
+
+    imports {
+        Base
+    }
+
+}
