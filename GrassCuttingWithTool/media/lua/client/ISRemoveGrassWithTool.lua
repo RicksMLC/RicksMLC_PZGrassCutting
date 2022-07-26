@@ -2,6 +2,15 @@
 
 require "TimedActions/ISRemoveGrass"
 
+local handScytheType = "base.HandScythe"
+local function GetHandScytheName()
+    local item = ScriptManager.instance:getItem(handScytheType)
+    if item then
+        return item:getDisplayName()
+    end
+    return "[Error: Cannot find " .. handScytheType .. "]"
+end
+
 -- Added the ISRemoveGrass:adjustMaxTime to perform the base operation then adjust it if we have an appropriate tool.
 -- A scyte will reduce the maxTime by 50%
 -- TODO:
@@ -9,8 +18,8 @@ require "TimedActions/ISRemoveGrass"
 --      [+] A short blade will reduce the maxTime by %
 --      [+] Give a little short blade xp for every use
 --      [+] Make the scythe reduce time a function of the base amount and the short blade skill
---      [-] Fix languange bug: Use the type instead of the name.
---      [ ] Modify the messages to use the language name for HandScythe
+--      [+] Fix languange bug: Use the type instead of the name.
+--      [+] Modify the messages to use the language name for HandScythe
 local baseHandScytheFactor = 0.5
 local oneHandEmptyMessageCount = 3
 local wishForScytheMessageCount = 2
@@ -29,12 +38,12 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
         if primaryItem:getType() == "HandScythe" then
             if secondaryItem then 
                 if oneHandEmptyMessageCount > 0 then
-                    HaloTextHelper.addText(player, "I can't use a hand scythe to cut grass unless the other hand is empty")
+                    HaloTextHelper.addText(player, "I can't use a " .. GetHandScytheName() .. " to cut grass unless the other hand is empty")
                     oneHandEmptyMessageCount = oneHandEmptyMessageCount - 1
                 end
             else
                 if muchFasterMessageCount > 0 then
-                    HaloTextHelper.addText(player, "This is much faster with a hand scythe")
+                    HaloTextHelper.addText(player, "Using this " .. GetHandScytheName() .. " is much faster")
                     muchFasterMessageCount = muchFasterMessageCount - 1
                 end
                 -- HandScythe category: SmallBlade
@@ -48,13 +57,13 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
             end
         else 
             if notAHandScytheMessageCount > 0 then
-                HaloTextHelper.addText(player, "This is not a hand scythe. It's a " .. primaryItem:getName() .. " [" .. primaryItem:getType() .. "]")
+                HaloTextHelper.addText(player, "This is not a " .. GetHandScytheName() .. ". It's a " .. primaryItem:getDisplayName())
                 notAHandScytheMessageCount = notAHandScytheMessageCount - 1 
             end
         end
     else
         if wishForScytheMessageCount > 0 then
-            HaloTextHelper.addText(player, "I wish I had a hand scythe")
+            HaloTextHelper.addText(player, "I wish I had a " .. GetHandScytheName())
             wishForScytheMessageCount = wishForScytheMessageCount - 1
         end
     end
