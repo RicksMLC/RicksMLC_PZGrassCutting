@@ -10,7 +10,7 @@ require "TimedActions/ISRemoveGrass"
 --      Give a little short blade xp for every use
 --      Make the scythe reduce time a function of the base amount and the short blade skill
 local baseHandScytheFactor = 0.5
-local oneHandEmptyMessageCount = 2
+local oneHandEmptyMessageCount = 3
 local wishForScytheMessageCount = 2
 local muchFasterMessageCount = 1
 local notAHandScytheMessageCount = 2
@@ -36,14 +36,17 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
                     muchFasterMessageCount = muchFasterMessageCount - 1
                 end
                 -- HandScythe category: SmallBlade
-                local smallBladeLvl = character:getPerkLevel(Perks.SmallBlade);
+                local smallBladeLvl = player:getPerkLevel(Perks.SmallBlade);
                 local timeFactor = baseHandScytheFactor - (smallBladeLvl / 40) -- lvl is 0 to 10, so divide by 40 to make 0 to 0.25
-
+                -- Have a 10% chance to give a little XP for SmallBlade
+                if ZombRand(9) == 0 then
+                    self.character:getXp():AddXP(Perks.SmallBlade, 1);
+                end
                 return maxTime * timeFactor
             end
         else 
             if notAHandScytheMessageCount > 0 then
-                HaloTextHelper.addText(player, "Not a hand scythe. Primary is '" .. primaryItem:getName() .. "'")
+                HaloTextHelper.addText(player, "This is not a hand scythe. It's a " .. primaryItem:getName())
                 notAHandScytheMessageCount = notAHandScytheMessageCount - 1 
             end
         end
