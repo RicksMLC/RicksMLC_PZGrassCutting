@@ -34,7 +34,9 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
     -- Is HandScythe equipped in the primary hand?
     -- Nothing in the secondary hand - can't use a scythe one-handed to cut grass.
     if primaryItem then
-        local primaryItemCategories = primaryItem:getCategories()
+        --print("RICKSMLC: ISRemoveGrassWithTool")
+        --print("RICKSMLC: getType() '" .. primaryItem:getType() .."'")
+        -- Note: Tested with type "Gravelbag" to reproduce bug 14/09/2022.
         if primaryItem:getType() == "HandScythe" then
             if secondaryItem then 
                 if oneHandEmptyMessageCount > 0 then
