@@ -1,4 +1,6 @@
---- Rick's MLC Grass Removal with a Tool
+-- Rick's MLC Grass Removal with a Tool
+-- TODO:
+--      [ ] self:setOverrideHandModels(nil, nil) needs override so the hand scythe stays in the hand.
 
 require "TimedActions/ISRemoveGrass"
 
@@ -11,7 +13,18 @@ local function GetHandScytheName()
     return "[Error: Cannot find " .. handScytheType .. "]"
 end
 
--- Added the ISRemoveGrass:adjustMaxTime to perform the base operation then adjust it if we have an appropriate tool.
+-- Method for saying player thoughts the base ISRemoveGrass has a o.character attribute
+function ISRemoveGrass:Think(thought, itemName, otherItemName)
+    if itemName then
+        thought = thought:gsub("<item>", itemName)
+    end
+    if otherItemName then
+        thought = thought:gsub("<otheritem>", otherItemName)
+    end
+    self.character:Say(thought, 1, 1, 1, UIFont.AutoNormMedium, 1, "radio")
+end
+
+-- Added the overload ISRemoveGrass:adjustMaxTime to perform the base operation then adjust it if we have an appropriate tool.
 -- A scyte will reduce the maxTime by 50%
 -- TODO:
 --      [ ] Make configurable in the item definition
@@ -28,24 +41,23 @@ local notAHandScytheMessageCount = 2
 function ISRemoveGrass:adjustMaxTime(maxTime) 
     maxTime = ISBaseTimedAction.adjustMaxTime(self, maxTime)
     -- Get the character inventory to check for a HandScythe
-    local player = getPlayer()
+    local player = self.character
     local primaryItem = player:getPrimaryHandItem()
     local secondaryItem = player:getSecondaryHandItem()
     -- Is HandScythe equipped in the primary hand?
     -- Nothing in the secondary hand - can't use a scythe one-handed to cut grass.
     if primaryItem then
-        --print("RICKSMLC: ISRemoveGrassWithTool")
-        --print("RICKSMLC: getType() '" .. primaryItem:getType() .."'")
         -- Note: Tested with type "Gravelbag" to reproduce bug 14/09/2022.
         if primaryItem:getType() == "HandScythe" then
             if secondaryItem then 
                 if oneHandEmptyMessageCount > 0 then
-                    HaloTextHelper.addText(player, "I can't use a " .. GetHandScytheName() .. " to cut grass unless the other hand is empty")
+                    --Think("I can't use a " .. GetHandScytheName() .. " to cut grass unless the other hand is empty")
+                    self:Think(getText("IGUI_RicksMLC_NeedEmptyOtherHand"), GetHandScytheName())
                     oneHandEmptyMessageCount = oneHandEmptyMessageCount - 1
                 end
             else
                 if muchFasterMessageCount > 0 then
-                    HaloTextHelper.addText(player, "Using this " .. GetHandScytheName() .. " is much faster")
+                    self:Think(getText("IGUI_RicksMLC_Success"), GetHandScytheName())
                     muchFasterMessageCount = muchFasterMessageCount - 1
                 end
                 -- HandScythe category: SmallBlade
@@ -59,15 +71,17 @@ function ISRemoveGrass:adjustMaxTime(maxTime)
             end
         else 
             if notAHandScytheMessageCount > 0 then
-                HaloTextHelper.addText(player, "This is not a " .. GetHandScytheName() .. ". It's a " .. primaryItem:getDisplayName())
+                self:Think(getText("IGUI_RicksMLC_ThisIsNotTheToolIAmLookingFor"), GetHandScytheName(), primaryItem:getDisplayName())
                 notAHandScytheMessageCount = notAHandScytheMessageCount - 1 
             end
         end
     else
         if wishForScytheMessageCount > 0 then
-            HaloTextHelper.addText(player, "I wish I had a " .. GetHandScytheName())
+            self:Think(getText("IGUI_RicksMLC_Wish"),  GetHandScytheName())
             wishForScytheMessageCount = wishForScytheMessageCount - 1
         end
     end
     return maxTime
 end
+
+-- TODO: self:setOverrideHandModels(nil, nil)

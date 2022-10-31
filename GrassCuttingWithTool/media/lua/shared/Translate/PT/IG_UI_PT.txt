@@ -1,0 +1,8 @@
+-- Rick's MLC Grass Cutting With Tool Mod
+
+IGUI_PT {
+	IGUI_RicksMLC_NeedEmptyOtherHand = "Não posso usar <item> para cortar relva a não ser que a outra mão esteja vazia.",
+	IGUI_RicksMLC_Success = "Usar isto <item> é muito mais rápido",
+	IGUI_RicksMLC_ThisIsNotTheToolIAmLookingFor = "Esto no es una <item>. Es un <otheritem>",
+	IGUI_RicksMLC_Wish = "Isto não é um <item>. É um <otheritem>",
+},

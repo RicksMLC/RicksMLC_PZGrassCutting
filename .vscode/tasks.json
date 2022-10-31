@@ -1,0 +1,60 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "RELEASE: Copy mod to Workshop for release",
+            "type": "shell",
+            "command": "xcopy",
+            "args": [
+                "C:\\Users\\rixae\\Documents\\Ricks Mid Life Crisis\\ProjectZomboid Mods\\RicksMLC_PZGrassCutting\\GrassCuttingWithTool",
+                "C:\\Users\\rixae\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool",
+                "/s",
+                "/e",
+                "/y",
+                "/d",
+                "/exclude:.vscode\\exclude.txt"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+        {
+            "label": "CLEAN: Delete test from mod Workshop",
+            "type": "shell",
+            "command": "del",
+            "args": [
+                "C:\\Users\\rixae\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool\\media\\lua\\client\\Tests"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+        // Copy for test
+        {
+            "label": "TEST: Copy Test lua Workshop for test",
+            "type": "shell",
+            "command": "xcopy",
+            "args": [
+                "C:\\Users\\rixae\\Documents\\Ricks Mid Life Crisis\\ProjectZomboid Mods\\RicksMLC_PZGrassCutting\\GrassCuttingWithTool",
+                "C:\\Users\\rixae\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool",
+                "/s",
+                "/e",
+                "/y",
+                "/d"
+            ],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
