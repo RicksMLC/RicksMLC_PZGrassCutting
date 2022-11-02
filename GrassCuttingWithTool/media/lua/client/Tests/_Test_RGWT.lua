@@ -9,7 +9,7 @@ require "ISRemoveGrassWithTool"
 
 local MockPlayer = ISBaseObject:derive("MockPlayer");
 function MockPlayer:new(player)
-    local o = {} -- create object if user does not provide one
+    local o = {} 
     setmetatable(o, self)
     self.__index = self
 
@@ -52,10 +52,9 @@ function MockPlayer:getTimedActionTimeModifier()
 end
 
 function MockPlayer:Say(text, r, g, b, font, n, preset)
-    DebugLog.log(DebugType.Mod, "ISPlayerWrapper:Say()")
-    -- FIXME: Do I really need to do this? realPlayer.Say(self, text, r, g, b, font, n, preset)
+    self.realPlayer:Say(text, r, g, b, font, n, preset)
     self.lastThought = text
-    DebugLog.log(DebugType.Mod, "ISPlayerWrapper:Say() end: " .. text)
+    DebugLog.log(DebugType.Mod, "MockPlayer:Say() end: " .. text)
 end
 
 function MockPlayer:getMoodles()
@@ -125,24 +124,34 @@ function RGWTool_Test:Init()
 end
 
 
-function RGWTool_Test:Test(testId, orig, new, passFunc, failMsg)
-    if passFunc(orig, new) then
-        DebugLog.log(DebugType.Mod, " [ ] Test: "  .. testId .. " Passed")
-    else
-        failMsg = string.gsub(failMsg, "<orig>", tostring(orig))
-        failMsg = string.gsub(failMsg, "<new>", tostring(new))
-        DebugLog.log(DebugType.Mod, " [x] Test: "  .. testId .. " Failed " .. failMsg)
-    end
-end
-
 local function cmpNltO(orig, new) return new < orig end
 local function cmpNeqO(orig, new) return orig == new end
 
-local testCases = {
-    {1, "base.HandScythe", nil,             cmpNltO, "new >= orig. orig: <orig> new: <new>"},
-    {2, nil,               nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>"},
-    {3, "base.HandScythe", "base.Saucepan", cmpNeqO, "new ~= orig. orig: <orig> new: <new>"},
+local testAdjustMaxTimeCases = {
+    {1, "base.HandScythe", nil,             cmpNltO, "new >= orig. orig: <orig> new: <new>", "Using this Hand Scythe is much faster"},
+    {2, nil,               nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", "I wish I had a Hand Scythe"},
+    {3, "base.HandScythe", "base.Saucepan", cmpNeqO, "new ~= orig. orig: <orig> new: <new>", "I can't use this Hand Scythe to cut grass unless the other hand is empty"},
+    {4, "base.Saucepan",   nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", "This is not a Hand Scythe. It's a Saucepan"}
 }
+function RGWTool_Test:TestAdjustMaxTime(testId, testCase)
+    self:setPrimaryItem(testCase[2])
+    self:setSecondaryItem(testCase[3])
+    local maxTime = 1
+    local newMaxTime = self.ISRemoveGrassInstance:adjustMaxTime(maxTime) 
+    if testCase[4](maxTime, newMaxTime) then
+        if self.player.lastThought == testCase[6] then
+            DebugLog.log(DebugType.Mod, " [ ] Test: "  .. testId .. " Passed")
+        else
+            DebugLog.log(DebugType.Mod, " [x] Test: "  .. testId .. " Failed - Mismatched Say text")
+            DebugLog.log(DebugType.Mod, "  expected: " .. testCase[6])
+            DebugLog.log(DebugType.Mod, "  actual:   " .. (self.player.lastThought or "nil"))
+        end
+    else
+        local failMsg = string.gsub(testCase[5], "<orig>", tostring(maxTime))
+        failMsg = string.gsub(failMsg, "<new>", tostring(newMaxTime))
+        DebugLog.log(DebugType.Mod, " [x] Test: "  .. testId .. " Failed " .. failMsg)
+    end
+end
 
 function RGWTool_Test:Run()
     DebugLog.log(DebugType.Mod, "RGWTool_Test:Run()")
@@ -151,12 +160,8 @@ function RGWTool_Test:Run()
         return
     end
     DebugLog.log(DebugType.Mod, "RGWTool_Test:Run() begin")
-    for i = 1, #testCases do
-        self:setPrimaryItem(testCases[i][2])
-        self:setSecondaryItem(testCases[i][3])
-        local maxTime = 1
-        local newMaxTime = self.ISRemoveGrassInstance:adjustMaxTime(maxTime) 
-        self:Test(testCases[i][1], maxTime, newMaxTime, testCases[i][4], testCases[i][5])
+    for i = 1, #testAdjustMaxTimeCases do
+        self:TestAdjustMaxTime(i, testAdjustMaxTimeCases[i])
     end
     DebugLog.log(DebugType.Mod, "RGWTool_Test:Run() end")
 end
@@ -196,7 +201,7 @@ function RGWTool_Test.OnLoad()
     DebugLog.log(DebugType.Mod, "RGWTool_Test.OnLoad()")
 	if RGWTool_Test.IsTestSave() then
         DebugLog.log(DebugType.Mod, "  - Test File Loaded")
-        RGWTool_Test.Execute()
+        --FIXME: This is auto run: RGWTool_Test.Execute()
     end
 end
 
