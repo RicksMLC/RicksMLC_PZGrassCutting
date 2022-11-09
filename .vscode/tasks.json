@@ -4,12 +4,23 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "ECHO: debug this script",
+            "type": "shell",
+            "command": "dir",
+            "args": ["${env:USERPROFILE}\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool\\media\\lua\\client"],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": false
+            }
+        },
+        {
             "label": "RELEASE: Copy mod to Workshop for release",
             "type": "shell",
             "command": "xcopy",
             "args": [
-                "C:\\Users\\rixae\\Documents\\Ricks Mid Life Crisis\\ProjectZomboid Mods\\RicksMLC_PZGrassCutting\\GrassCuttingWithTool",
-                "C:\\Users\\rixae\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool",
+                "${env:USERPROFILE}\\Documents\\Ricks Mid Life Crisis\\ProjectZomboid Mods\\RicksMLC_PZGrassCutting\\GrassCuttingWithTool",
+                "${env:USERPROFILE}\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool",
                 "/s",
                 "/e",
                 "/y",
@@ -28,12 +39,12 @@
             "type": "shell",
             "command": "del",
             "args": [
-                "C:\\Users\\rixae\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool\\media\\lua\\client\\Tests"
+                "${env:USERPROFILE}\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool\\media\\lua\\client\\Tests"
             ],
             "problemMatcher": [],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             }
         },
 
@@ -43,8 +54,8 @@
             "type": "shell",
             "command": "xcopy",
             "args": [
-                "C:\\Users\\rixae\\Documents\\Ricks Mid Life Crisis\\ProjectZomboid Mods\\RicksMLC_PZGrassCutting\\GrassCuttingWithTool",
-                "C:\\Users\\rixae\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool",
+                "${env:USERPROFILE}\\Documents\\Ricks Mid Life Crisis\\ProjectZomboid Mods\\RicksMLC_PZGrassCutting\\GrassCuttingWithTool",
+                "${env:USERPROFILE}\\Zomboid\\Workshop\\RicksMLCGrassCuttingWithTool\\Contents\\mods\\GrassCuttingWithTool",
                 "/s",
                 "/e",
                 "/y",
@@ -53,7 +64,7 @@
             "problemMatcher": [],
             "group": {
                 "kind": "build",
-                "isDefault": true
+                "isDefault": false
             }
         }
     ]
