@@ -19,37 +19,23 @@ function MockPlayer:new(player)
     return o
 end
 
-function MockPlayer:getPerkLevel(perkType)
-    return self.realPlayer:getPerkLevel(perkLevel)
-end
+function MockPlayer:getPlayerNum() return self.realPlayer:getPlayerNum() end
 
-function MockPlayer:getXp()
-    return self.realPlayer:getXp()
-end
+function MockPlayer:getPerkLevel(perkType) return self.realPlayer:getPerkLevel(perkLevel) end
 
-function MockPlayer:getPrimaryHandItem()
-    return self.realPlayer:getPrimaryHandItem()
-end
+function MockPlayer:getXp() return self.realPlayer:getXp() end
 
-function MockPlayer:setPrimaryHandItem(item)
-    self.realPlayer:setPrimaryHandItem(item)
-end
+function MockPlayer:getPrimaryHandItem() return self.realPlayer:getPrimaryHandItem() end
 
-function MockPlayer:getSecondaryHandItem()
-    return self.realPlayer:getSecondaryHandItem()
-end
+function MockPlayer:setPrimaryHandItem(item) self.realPlayer:setPrimaryHandItem(item) end
 
-function MockPlayer:setSecondaryHandItem(item)
-    self.realPlayer:setSecondaryHandItem(item)
-end
+function MockPlayer:getSecondaryHandItem() return self.realPlayer:getSecondaryHandItem() end
 
-function MockPlayer:isTimedActionInstant()
-    return false
-end
+function MockPlayer:setSecondaryHandItem(item) self.realPlayer:setSecondaryHandItem(item) end
 
-function MockPlayer:getTimedActionTimeModifier()
-    return self.realPlayer:getTimedActionTimeModifier()
-end
+function MockPlayer:isTimedActionInstant() return false end
+
+function MockPlayer:getTimedActionTimeModifier() return self.realPlayer:getTimedActionTimeModifier() end
 
 function MockPlayer:Say(text, r, g, b, font, n, preset)
     self.realPlayer:Say(text, r, g, b, font, n, preset)
@@ -57,13 +43,9 @@ function MockPlayer:Say(text, r, g, b, font, n, preset)
     DebugLog.log(DebugType.Mod, "MockPlayer:Say() end: " .. text)
 end
 
-function MockPlayer:getMoodles()
-    return self.realPlayer:getMoodles()
-end
+function MockPlayer:getMoodles() return self.realPlayer:getMoodles() end
 
-function MockPlayer:getBodyDamage()
-    return self.realPlayer:getBodyDamage()
-end
+function MockPlayer:getBodyDamage() return self.realPlayer:getBodyDamage() end
 
 ----------------------------------------------------------------------
 
@@ -81,7 +63,8 @@ function RGWTool_Test:new()
     o.ISRemoveGrassInstance = nil
     o.preTestPrimaryItem = nil
     o.preTestSecondaryItem = nil
-
+    o.resultsWindow = nil
+    o.testResults = {}
     return o
 end
 
@@ -105,6 +88,77 @@ function RGWTool_Test:setSecondaryItem(type)
 	return item
 end
 
+
+local function cmpNltO(orig, new) return new < orig end
+local function cmpNeqO(orig, new) return orig == new end
+local primaryItem = 2
+local secondaryItem = 3
+local compareFn = 4
+local failMsg = 5
+local testAdjustMaxTimeCases = {
+--  id, primary item,      secondary item,  compare, failmsg if compare fails,               say?  Expected "say" text
+    {1, "base.HandScythe", nil,             cmpNltO, "new >= orig. orig: <orig> new: <new>"},
+    {2, nil,               nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>"},
+    {3, "base.HandScythe", "base.Saucepan", cmpNeqO, "new ~= orig. orig: <orig> new: <new>"},
+    {4, "base.Saucepan",   nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>"},
+    {5, "base.Saucepan",   nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>"} -- Test disable thoughts
+}
+function RGWTool_Test:TestAdjustMaxTime(testId, testCase)
+    self:setPrimaryItem(testCase[primaryItem])
+    self:setSecondaryItem(testCase[secondaryItem])
+    local maxTime = 1
+
+    local newMaxTime = self.ISRemoveGrassInstance:adjustMaxTime(maxTime) 
+
+    if not testCase[compareFn](maxTime, newMaxTime) then
+        local failMsg = string.gsub(testCase[5], "<orig>", tostring(maxTime))
+        failMsg = string.gsub(failMsg, "<new>", tostring(newMaxTime))
+        self.testResults[#self.testResults+1] = "[x] Test: "  .. tostring(testId) .. " Failed " .. failMsg
+        DebugLog.log(DebugType.Mod, self.testResults[#self.testResults])
+    end
+end
+    
+
+-- local testAdjustMaxTimeCases = {
+-- --  id, primary item,      secondary item,  compare, failmsg if compare fails,               say?  Expected "say" text
+--     {1, "base.HandScythe", nil,             cmpNltO, "new >= orig. orig: <orig> new: <new>", true, "Using this Hand Scythe is much faster"},
+--     {2, nil,               nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", true, "I wish I had a Hand Scythe"},
+--     {3, "base.HandScythe", "base.Saucepan", cmpNeqO, "new ~= orig. orig: <orig> new: <new>", true, "I can't use this Hand Scythe to cut grass unless the other hand is empty"},
+--     {4, "base.Saucepan",   nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", true, "This is not a Hand Scythe. It's a Saucepan"},
+--     {5, "base.Saucepan",   nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", false, nil} -- Test disable thoughts
+-- }
+-- function RGWTool_Test:TestAdjustMaxTime(testId, testCase)
+--     self:setPrimaryItem(testCase[2])
+--     self:setSecondaryItem(testCase[3])
+--     local maxTime = 1
+
+--     -- Test the sandbox setting for turning on/off thoughts
+--     SandboxVars.RicksMLC_GrassCuttingWithTool.ThoughtsOn = testCase[6]
+
+--     local newMaxTime = self.ISRemoveGrassInstance:adjustMaxTime(maxTime) 
+
+--     if testCase[4](maxTime, newMaxTime) then
+--         if self.player.lastThought == testCase[7] then
+--             self.testResults[#self.testResults+1] = "[o] Test: "  .. tostring(testId) .. " Passed."
+--             DebugLog.log(DebugType.Mod, self.testResults[#self.testResults])
+--         else
+--             local msg = "[x] Test: "  .. tostring(testId) .. " Failed - Mismatched Say text"
+--             local expMsg = " <INDENT:10> expected: " .. testCase[7]
+--             local actMsg = " actual: " .. (self.player.lastThought or "nil")
+--             self.testResults[#self.testResults+1] = msg .. " <LINE> " .. expMsg .. " <LINE> " .. actMsg
+--             DebugLog.log(DebugType.Mod, msg)
+--             DebugLog.log(DebugType.Mod, expMsg)
+--             DebugLog.log(DebugType.Mod, actMsg)
+--         end
+--     else
+--         local failMsg = string.gsub(testCase[5], "<orig>", tostring(maxTime))
+--         failMsg = string.gsub(failMsg, "<new>", tostring(newMaxTime))
+--         self.testResults[#self.testResults+1] = "[x] Test: "  .. tostring(testId) .. " Failed " .. failMsg
+--         DebugLog.log(DebugType.Mod, self.testResults[#self.testResults])
+--     end
+--     self.player.lastThought = nil -- reset the last thought
+-- end
+
 function RGWTool_Test:Init()
     DebugLog.log(DebugType.Mod, "RGWTool_Test:Init()")
     -- Create the test instance of the ISRemoveGrass
@@ -113,8 +167,9 @@ function RGWTool_Test:Init()
     self.preTestPrimaryItem = self.player:getPrimaryHandItem()
     self.preTestSecondaryItem = self.player:getSecondaryHandItem()
 
-    local square = nil
+    self:CreateWindow()
 
+    local square = nil
     self.ISRemoveGrassInstance = ISRemoveGrass:new(self.player, square)
     if not self.ISRemoveGrassInstance then
         DebugLog.log(DebugType.Mod, "RGWTool_Test:Init(): ERROR self.ISRemoveGrassInstance is nil")
@@ -123,35 +178,32 @@ function RGWTool_Test:Init()
     self.isReady = true
 end
 
-
-local function cmpNltO(orig, new) return new < orig end
-local function cmpNeqO(orig, new) return orig == new end
-
-local testAdjustMaxTimeCases = {
-    {1, "base.HandScythe", nil,             cmpNltO, "new >= orig. orig: <orig> new: <new>", "Using this Hand Scythe is much faster"},
-    {2, nil,               nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", "I wish I had a Hand Scythe"},
-    {3, "base.HandScythe", "base.Saucepan", cmpNeqO, "new ~= orig. orig: <orig> new: <new>", "I can't use this Hand Scythe to cut grass unless the other hand is empty"},
-    {4, "base.Saucepan",   nil,             cmpNeqO, "new ~= orig. orig: <orig> new: <new>", "This is not a Hand Scythe. It's a Saucepan"}
-}
-function RGWTool_Test:TestAdjustMaxTime(testId, testCase)
-    self:setPrimaryItem(testCase[2])
-    self:setSecondaryItem(testCase[3])
-    local maxTime = 1
-    local newMaxTime = self.ISRemoveGrassInstance:adjustMaxTime(maxTime) 
-    if testCase[4](maxTime, newMaxTime) then
-        if self.player.lastThought == testCase[6] then
-            DebugLog.log(DebugType.Mod, " [ ] Test: "  .. testId .. " Passed")
-        else
-            DebugLog.log(DebugType.Mod, " [x] Test: "  .. testId .. " Failed - Mismatched Say text")
-            DebugLog.log(DebugType.Mod, "  expected: " .. testCase[6])
-            DebugLog.log(DebugType.Mod, "  actual:   " .. (self.player.lastThought or "nil"))
-        end
+function RGWTool_Test:CreateWindow()
+    if self.resultsWindow then
+        self.resultsWindow:setObject(self.testResults)
     else
-        local failMsg = string.gsub(testCase[5], "<orig>", tostring(maxTime))
-        failMsg = string.gsub(failMsg, "<new>", tostring(newMaxTime))
-        DebugLog.log(DebugType.Mod, " [x] Test: "  .. testId .. " Failed " .. failMsg)
+        DebugLog.log(DebugType.Mod, "RGWTool_Test:CreateWindow()")
+        local x = getPlayerScreenLeft(self.player:getPlayerNum())
+        local y = getPlayerScreenTop(self.player:getPlayerNum())
+        local w = getPlayerScreenWidth(self.player:getPlayerNum())
+        local h = getPlayerScreenHeight(self.player:getPlayerNum())
+        self.resultsWindow = _Test_RicksMLC_UI_Window:new(x + 70, y + 50, self.player, self.testResults)
+        self.resultsWindow:initialise()
+        self.resultsWindow:addToUIManager()
+        _Test_RicksMLC_UI_Window.windows[self.player] = window
+        if self.player:getPlayerNum() == 0 then
+            ISLayoutManager.RegisterWindow('RGWTool_Test', ISCollapsableWindow, self.resultsWindow)
+        end
+    end
+
+    self.resultsWindow:setVisible(true)
+    self.resultsWindow:addToUIManager()
+    local joypadData = JoypadState.players[self.player:getPlayerNum()+1]
+    if joypadData then
+        joypadData.focus = window
     end
 end
+
 
 function RGWTool_Test:Run()
     DebugLog.log(DebugType.Mod, "RGWTool_Test:Run()")
@@ -163,6 +215,8 @@ function RGWTool_Test:Run()
     for i = 1, #testAdjustMaxTimeCases do
         self:TestAdjustMaxTime(i, testAdjustMaxTimeCases[i])
     end
+    self.resultsWindow:createChildren()
+
     DebugLog.log(DebugType.Mod, "RGWTool_Test:Run() end")
 end
 
@@ -181,7 +235,7 @@ end
 function RGWTool_Test.IsTestSave()
     local saveInfo = getSaveInfo(getWorld():getWorld())
     DebugLog.log(DebugType.Mod, "RGWTool_Test.OnLoad() '" .. saveInfo.saveName .. "'")
-	return saveInfo.saveName and saveInfo.saveName == "RicksMLC_RGWTool_Test"
+	return saveInfo.saveName and saveInfo.saveName:find("RicksMLC_Test") ~= nil
 end
 
 function RGWTool_Test.Execute()

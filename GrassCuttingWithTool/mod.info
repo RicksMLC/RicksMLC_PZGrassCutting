@@ -1,5 +1,8 @@
 name=Rick's MLC Grass Cutting Mod
 poster=poster.png
 id=RicksMLC_GrassCuttingMod
-description=Speed up Remove Grass when using the Hand Scythe.
+description=Speed up Remove Grass using the Hand Scythe. <LINE>
+description= <LINE>
+description=The Remove Grass time will be 60% to 85% faster, depending on the Small Blade level of the player. <LINE>
+description=The hand scythe will automatically be equipped into the primary hand from any backpack if needed, and the secondary hand emptied. <LINE>
 url=
