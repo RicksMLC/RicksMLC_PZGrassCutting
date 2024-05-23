@@ -1,0 +1,7 @@
+Sandbox_EN = {
+    Sandbox_RicksMLC_GrassCutting = "Rick's MLC Grass Cutting",
+
+    Sandbox_RicksMLC_GrassCutting_GrantXP = "Gain XP",
+    Sandbox_RicksMLC_GrassCutting_GrantXP_tooltip = "Enable/Disable Short Blade XP gain.  There is a 10% chance to get a small amount of short blade XP if this is enabled.",
+
+}

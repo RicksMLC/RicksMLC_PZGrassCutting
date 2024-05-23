@@ -1,0 +1,10 @@
+-- Rick's MLC Pay At The Pump
+-- Chinese Simplified Translation - UTF-8
+
+Sandbox_CN = {
+    Sandbox_RicksMLC_GrassCutting = "Rick's MLC 割草",
+
+    Sandbox_RicksMLC_GrassCutting_GrantXP = "获得 XP",
+    Sandbox_RicksMLC_GrassCutting_GrantXP_tooltip = "启用/禁用短刃 XP 增益。启用后，有 10% 的几率获得少量短刃 XP。",
+
+}

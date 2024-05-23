@@ -1,0 +1,9 @@
+VERSION = 1,
+
+option RicksMLC_GrassCutting.GrantXP
+{
+	type = boolean,
+	default = true,
+	page = RicksMLC_GrassCutting,
+	translation = RicksMLC_GrassCutting_GrantXP,
+}

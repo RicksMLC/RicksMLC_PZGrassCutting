@@ -9,6 +9,7 @@
 --  [+] Give a little short blade xp for every use
 --  [+] Make the scythe reduce time a function of the base amount and the short blade skill
 --  [+] Fix languange bug: Use the type instead of the name.
+
 require "TimedActions/ISRemoveGrass"
 require "ISBaseObject"
 
@@ -18,6 +19,8 @@ local baseHandScytheFactor = 0.4
 
 function RicksMLC_RemoveGrass.ChanceXPGain(player)
     -- Have a 10% chance to give a little XP for SmallBlade
+    if not SandboxVars.RicksMLC_GrassCutting.GrantXP then return end
+    
     if ZombRand(0, 9) <= 1 then
         player:getXp():AddXP(Perks.SmallBlade, 1);
     end

@@ -1,0 +1,10 @@
+-- Rick's MLC Grass Cutting
+-- Encoding: ANSI
+
+Sandbox_ES = {
+ Sandbox_RicksMLC_GrassCutting = "Rick's MLC Grass Cutting",
+
+    Sandbox_RicksMLC_GrassCutting_GrantXP = "Gana XP",
+    Sandbox_RicksMLC_GrassCutting_GrantXP_tooltip = "Activar/desactivar la ganancia de XP de hoja corta. Hay un 10% de posibilidades de obtener una pequeña cantidad de XP de hoja corta si esto está habilitado.",
+
+}
