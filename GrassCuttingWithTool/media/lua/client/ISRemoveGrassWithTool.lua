@@ -1,5 +1,5 @@
 -- Rick's MLC Grass Removal with a Tool
--- Having a hand scythe will reduce the remove grass time by 50% - 75% depending on the short blade level.
+-- Having a hand scythe will reduce the Remove Grass time by 40% - 85% depending on the short blade level.
 --
 -- Specification:
 --  [+] Auto-equip the hand scythe if it is in the inventory but not in the primary hand
